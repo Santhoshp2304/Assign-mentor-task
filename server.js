@@ -5,17 +5,20 @@ const studentRoute = require("./routes/studentRoutes");
 require("dotenv").config();
 
 const app = express();
-
+const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
+app.use('/apiStudent',studentRoute);
+app.use('/apiMentor',mentorRoute);
+
 mongoose
-  .connect(process.env.MONGO)
+  .connect(process.env.MONGODB)
   .then(() => {
     console.log(`Connected to MONGODB`);
-    app.listen(process.env.PORT, () => {
+    app.listen(PORT, () => {
       console.log(`Server is running on the PORT - ${PORT}`);
     });
   })
   .catch((err) => {
-    console.log(`Error in connecting MONGODB - ${PORT}`);
+    console.log(`Error in connecting MONGODB - ${err}`);
   });

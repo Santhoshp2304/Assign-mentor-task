@@ -3,7 +3,7 @@ const Mentor = require("../models/Mentor");
 const Student = require("../models/Student");
 const router = express.Router();
 
-// create a mentor endpoint
+//Create a mentor
 
 router.post("/create", async (req, res) => {
   try {
@@ -15,5 +15,32 @@ router.post("/create", async (req, res) => {
   }
 });
 
+//Select one mentor and Add multiple Student
 
-module.exports =router;
+router.post("/addStudents", async (req, res) => {
+  const { mentorId, studentsId } = req.body;
+  const mentor = await Mentor.findById(mentorId);
+  // give studentsId as array in postman
+  mentor.students.push(...studentsId);
+  await mentor.save();
+  //to update a mentor in students documents
+  studentsId.forEach(async(id) => {
+    const student = await Student.findById(id)
+    student.mentor = mentorId;
+    await student.save();
+    
+  });
+  res.send(mentor);
+});
+
+//Writing API to show all students for a particular mentor
+
+router.get('/:id/allStudents',async(req,res) => {
+
+  const mentor = await Mentor.findById(req.params.id).populate('students');
+  res.send(mentor.students);
+
+})
+
+
+module.exports = router;
